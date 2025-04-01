@@ -101,10 +101,10 @@
 
 插件首次运行时，会在 `[你的 MRB2 根目录]/plugin_configs/` 目录下自动生成默认配置文件 `CodeShare.yml`。
 
-文件内包含注释说明，你可以根据需要参考注释进行修改。常见的可配置项可能包括图片主题、字体等（具体请查看生成的配置文件）。
+文件内包含注释说明，你可以根据需要参考注释进行修改。
 
 ## 📜 许可证
 
-版权所有 © 2024 Xiaosu。
+版权所有 © 2025 Xiaosu。
 
 本项目根据 [Apache License 2.0](https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/LICENSE) 许可证的条款进行分发。
