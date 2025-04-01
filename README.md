@@ -1,6 +1,8 @@
 <div align="center">
 
-<img src="https://mrb2.xiaosu.icu/icon.webp" width="200px" height="200px">
+<a href="https://github.com/MuRainBot/MuRainBot2" style="text-decoration:none" >
+    <img src="https://mrb2.xiaosu.icu/icon.webp" width="200px" height="200px">
+</a>
 
 # murainbot-plugin-codeshare
 
