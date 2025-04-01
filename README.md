@@ -1,10 +1,12 @@
 <div align="center">
 
+<img src="https://mrb2.xiaosu.icu/icon.webp" width="200px" height="200px">
+
 # murainbot-plugin-codeshare
 
 ***✨MuRainBot2插件，生成美丽的可供分享的代码图片✨***
 
-![example](https://cdn.jsdelivr.net/gh/xiaosuyyds/PowerText@master/example.png)
+![example](https://cdn.jsdelivr.net/gh/xiaosuyyds/murainbot-plugin-codeshare/@master/example.png)
 
 </div>
 
