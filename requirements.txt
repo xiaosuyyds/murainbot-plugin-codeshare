@@ -1,0 +1,4 @@
+pillow~=11.1.0
+PowerBlur~=0.1.2
+PowerText~=0.3.1
+Pygments~=2.19.1
