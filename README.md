@@ -8,7 +8,7 @@
 
 ***✨ MuRainBot2 插件，生成美观、可供分享的代码图片 ✨***
 
-![示例图片](https://cdn.jsdelivr.net/gh/xiaosuyyds/murainbot-plugin-codeshare/@master/example.png)
+![示例图片](example.png)
 
 > 麻麻再也不用担心我看群里的文本代码看的头晕眼花了
 
@@ -44,8 +44,9 @@
 3.  **放置数据文件:**
     将本仓库 `data` 目录下的 **所有文件** 复制到你的 MuRainBot2 框架的 `data` 目录下。
     最终路径应类似于：`[你的 MRB2 根目录]/data/`
+    **⚠️ 注意:** 此操作会将本插件的数据文件直接放入 MRB2 的根 `data` 目录。请确保这不会覆盖你或其他插件的重要数据。标准的插件实践通常是将数据放在 `data` 目录下的插件同名子目录中（如 `data/CodeShare/`）。如果 MRB2 支持此方式，建议开发者未来考虑调整。
 
-5.  **安装依赖:**
+4.  **安装依赖:**
     进入你刚刚克隆（或解压）的 `murainbot-plugin-codeshare` 目录，然后安装所需的 Python 库：
     ```bash
     cd murainbot-plugin-codeshare
@@ -53,10 +54,10 @@
     ```
     *(请确保你使用的 `python` 和 `pip` 命令对应你运行 MRB2 的 Python 环境)*
 
-6.  **(可选) 配置 Emoji 资源:**
+5.  **(可选) 配置 Emoji 资源:**
     请参考下面的 **[🤔 Emoji 支持 (可选)](#-emoji-支持-可选)** 部分进行操作。
 
-7.  **运行 MRB2:**
+6.  **运行 MRB2:**
     正常启动或重启你的 MuRainBot2，插件应该会被加载。
 
 ## 🤔 Emoji 支持 (可选)
@@ -104,6 +105,6 @@
 
 ## 📜 许可证
 
-版权所有 © 2025 Xiaosu。
+版权所有 © 2024 Xiaosu。
 
 本项目根据 [Apache License 2.0](https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/LICENSE) 许可证的条款进行分发。
