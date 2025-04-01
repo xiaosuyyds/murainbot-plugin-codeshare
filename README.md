@@ -105,6 +105,6 @@
 
 ## 📜 许可证
 
-版权所有 © 2024 Xiaosu。
+版权所有 © 2025 Xiaosu。
 
 本项目根据 [Apache License 2.0](https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/LICENSE) 许可证的条款进行分发。
