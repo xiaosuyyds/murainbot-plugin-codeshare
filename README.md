@@ -29,8 +29,8 @@ git clone https://github.com/xiaosuyyds/murainbot-plugin-codeshare.git
 
 然后将本项目的 `data` 目录内的文件放在框架的 `data` 文件夹内
 
-注：本项目的data目录并不包含emoji资源，请自行下载后放到框架的`data/emoji`文件夹内，下载地址：https://github.com/googlefonts/noto-emoji/tree/main/png
-任选一种分辨率即可，直接将全部emoji文件放进`data/emoji`文件夹。
+注：本项目的data目录并不包含emoji资源（因为emoji的大小过大），请自行下载后放到框架的`data/emoji`文件夹内，下载地址：https://github.com/googlefonts/noto-emoji/tree/main/png
+任选一种分辨率即可，直接将全部emoji文件放进`data/emoji`文件夹，当然，如果你并不需要渲染代码中的emoji，可以忽略这一步。
 
 然后`python -m pip install -r /path/to/your/download/CodeShare/requirements.txt`
 下载所需依赖库
@@ -39,12 +39,19 @@ git clone https://github.com/xiaosuyyds/murainbot-plugin-codeshare.git
 
 ## 使用
 
-支持两种命令
-`/codeshare` `/cs`
+支持命令 `/codeshare` (别名 `/cs`)。
 
-两种用法:
- - 直接在命令后面跟上代码
- - 回复一条消息，然后跟上命令
+会自动识别输入的代码语言，但是可能会识别错误。
+
+**用法示例:**
+
+1.  **直接跟代码:**
+    ```
+    /cs print("Hello, MuRainBot!")
+    ```
+
+2.  **回复消息:**
+    *   然后回复需要绘制的消息，回复后跟上发送命令 `/cs` 或 `/codeshare`，注意！QQ默认回复会添加at，请删除他。
 
 ## 配置项
 
