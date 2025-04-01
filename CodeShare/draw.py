@@ -132,7 +132,7 @@ def draw_code(colors_code):
     path = os.path.join(CACHE_PATH, f"code-{uuid.uuid4().hex}.png")
 
     left, upper, right, lower = img.getbbox()
-    img = img.crop((0, 0, max(right + 40, 300), lower + 20))
+    img = img.crop((0, 0, max(right + 40, 400), lower + 20))
 
     window = Image.new("RGBA", (img.size[0] + 40, img.size[1] + 80), (30, 30, 46, 255))
     window.paste(img, (20, 60), img)
@@ -162,7 +162,7 @@ def draw_code(colors_code):
 
     bg.paste(window, (40, 40), window_mask)
     draw = ImageDraw.Draw(bg)
-    draw.text((10, bg.size[1] - 36), "by xiaosuyyds/CodeShare", (100, 100, 100), english_font)
+    draw.text((10, bg.size[1] - 36), "by xiaosuyyds/murainbot-plugin-codeshare", (100, 100, 100), english_font)
 
     bg.save(path)
     return path, message
