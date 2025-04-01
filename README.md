@@ -10,6 +10,8 @@
 
 ![示例图片](https://cdn.jsdelivr.net/gh/xiaosuyyds/murainbot-plugin-codeshare/@master/example.png)
 
+> 麻麻再也不用担心我看群里的文本代码看的头晕眼花了
+
 </div>
 
 ## ✨ 功能特性
