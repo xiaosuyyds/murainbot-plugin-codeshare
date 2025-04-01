@@ -4,11 +4,20 @@
 
 ***✨MuRainBot2插件，生成美丽的可供分享的代码图片✨***
 
-![example](example.png)
+![example](https://cdn.jsdelivr.net/gh/xiaosuyyds/PowerText@master/example.png)
+
 </div>
 
 
 ## 安装
+
+下载本仓库代码
+
+```bash
+git clone https://github.com/xiaosuyyds/murainbot-plugin-codeshare.git
+```
+
+或[直接下载zip](https://github.com/xiaosuyyds/murainbot-plugin-codeshare/archive/refs/heads/master.zip)
 
 参考[MRB2文档](https://mrb2.xiaosu.icu/start/getting-started)
 
@@ -42,4 +51,4 @@
 ## 许可证
 版权所有 2025 Xiaosu。
 
-根据 [Apache 2.0 许可证](https://github/xiaosuyyds/murainbot-plugin-codeshare/blob/master/LICENSE) 的条款分发。
+根据 [Apache 2.0 许可证](https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/LICENSE) 的条款分发。
