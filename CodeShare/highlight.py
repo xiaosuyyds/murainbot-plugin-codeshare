@@ -29,7 +29,7 @@ def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _fl
         if language == 'guess':
             lexer = guess_lexer(code_snippet)
         else:
-            lexer = get_lexer_by_name('python')
+            lexer = get_lexer_by_name(language)
 
         tokens = lexer.get_tokens(code_snippet)
 
@@ -52,7 +52,7 @@ def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _fl
             return results
         else:
             res = [(f"似乎出现了一些问题，已自动回退到默认语言\n", error_rgb)]
-            res += get_token_colors(code_snippet, style_name, "text", _flag=True)
+            res += get_token_colors(code_snippet, style_name, "python", _flag=True)
             return res
 
     return results
