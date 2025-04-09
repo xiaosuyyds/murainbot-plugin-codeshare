@@ -1,6 +1,8 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
 # For details: https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/NOTICE
 
+import traceback
+
 from pygments.lexers import guess_lexer, get_lexer_by_name
 from pygments.styles import get_style_by_name
 from pygments.token import Token, Error
@@ -46,7 +48,7 @@ def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _fl
 
     except Exception as e:
         # Catch other potential errors during processing
-        print(f"An unexpected error occurred: {e}")
+        print(f"An unexpected error occurred: {repr(e)}\n{traceback.format_exc()}")
         if _flag:
             results.append((f"<Internal Error: {e}>", error_rgb))
             return results

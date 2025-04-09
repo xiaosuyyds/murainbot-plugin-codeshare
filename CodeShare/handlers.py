@@ -77,8 +77,36 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
         if isinstance(rich, QQRichText.Text):
             code += rich.data.get("text")
 
+    cmd = code.split("codeshare", 1)[-1].strip().split(" ", 1)
+
     if not is_reply:
-        code = code.split("codeshare", 1)[-1]
+        code = cmd[-1]
+
+    language_name = "guess"
+
+    if len(cmd) == 2:
+        language_name = cmd[0]
+        if language_name not in [
+            "python",
+            "c",
+            "cpp",
+            "java",
+            "cs",
+            "js",
+            "ts",
+            "rust",
+            "go",
+            "php",
+            "ruby",
+            "kotlin",
+            "swift",
+            "perl",
+            "lua",
+            "sql"
+        ]:
+            if not is_reply:
+                code = language_name + " " + code
+            language_name = "guess"
 
     code = "\n".join(dedent_lines(code.split("\n")))
 
@@ -95,7 +123,7 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
             Actions.SendMsg(message=message, user_id=event_data.user_id).call()
         return
     try:
-        code_colors = highlight.get_token_colors(code)
+        code_colors = highlight.get_token_colors(code, language=language_name)
     except Exception as e:
         message = QQRichText.QQRichText(
             QQRichText.Text(
