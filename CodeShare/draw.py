@@ -129,7 +129,7 @@ def draw_code(colors_code):
         now_y = text_y
         # print(now_y, line_num)
 
-    path = os.path.join(CACHE_PATH, f"code-{uuid.uuid4().hex}.png")
+    path = os.path.join(CACHE_PATH, f"code-{uuid.uuid4().hex}.webp")
 
     left, upper, right, lower = img.getbbox()
     img = img.crop((0, 0, max(right + 40, 400), lower + 20))
@@ -164,5 +164,5 @@ def draw_code(colors_code):
     draw = ImageDraw.Draw(bg)
     draw.text((10, bg.size[1] - 36), "by xiaosuyyds/murainbot-plugin-codeshare", (100, 100, 100), english_font)
 
-    bg.save(path)
+    bg.save(path, quality=95)
     return path, message

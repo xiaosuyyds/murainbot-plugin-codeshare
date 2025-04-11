@@ -77,7 +77,11 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
         if isinstance(rich, QQRichText.Text):
             code += rich.data.get("text")
 
-    cmd = code.split("codeshare", 1)[-1].strip().split(" ", 1)
+    cmd = code.split("codeshare", 1)[-1]
+
+    if cmd.startswith(" "):
+        cmd = cmd[1:]
+    cmd = cmd.split(" ", 1)
 
     if not is_reply:
         code = cmd[-1]
@@ -85,7 +89,7 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
     language_name = "guess"
 
     if len(cmd) == 2:
-        language_name = cmd[0]
+        language_name = cmd[0].strip()
         if language_name not in [
             "python",
             "c",
@@ -105,7 +109,7 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
             "sql"
         ]:
             if not is_reply:
-                code = language_name + " " + code
+                code = cmd[0] + " " + code
             language_name = "guess"
 
     code = "\n".join(dedent_lines(code.split("\n")))
