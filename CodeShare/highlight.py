@@ -1,11 +1,15 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
 # For details: https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/NOTICE
 
+from Lib import Logger
+
 import traceback
 
-from pygments.lexers import guess_lexer, get_lexer_by_name
+from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.styles import get_style_by_name
 from pygments.token import Token, Error
+
+logger = Logger.get_logger()
 
 
 def hex_to_rgb(hex_color):
@@ -17,10 +21,32 @@ def hex_to_rgb(hex_color):
     return None
 
 
+language_mapping = {
+    "py": "python",
+    "c": "c",
+    "cpp": "cpp",
+    "cs": "csharp",
+    "js": "javascript",
+    "ts": "typescript",
+    "rust": "rust",
+    "go": "go",
+    "php": "php",
+    "ruby": "ruby",
+    "kotlin": "kotlin",
+    "java": "java",
+    "swift": "swift",
+    "perl": "perl",
+    "lua": "lua",
+    "sql": "sql",
+    "json": "json",
+    "md": "markdown",
+}
+
+
 def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _flag=False):
     style = get_style_by_name(style_name)
 
-    default_hex = style.background_color
+    default_hex = style.style_for_token(Token.Text).get('color')
     default_rgb = hex_to_rgb(default_hex) if default_hex else (200, 200, 200)
 
     error_style = style.style_for_token(Error)
@@ -36,19 +62,25 @@ def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _fl
         tokens = lexer.get_tokens(code_snippet)
 
         for ttype, ttext in tokens:
-            token_style = style.style_for_token(ttype)
+            try:
+                token_style = style.style_for_token(ttype)
+                rgb_color = default_rgb
+                if ttype is Error:
+                    rgb_color = error_rgb
+                elif token_style.get('color'):
+                    rgb_color = hex_to_rgb(token_style['color']) or default_rgb
 
-            rgb_color = default_rgb
-            if ttype is Error:
-                rgb_color = error_rgb
-            elif token_style.get('color'):
-                rgb_color = hex_to_rgb(token_style['color']) or default_rgb
+            except Exception as e:
+                logger.warning(f"An unexpected error occurred: from get_token_colors:"
+                               f"{ttext} {ttype}\n"
+                               f"{repr(e)}\n{traceback.format_exc()}")
+                rgb_color = default_rgb
 
             results.append((ttext, rgb_color))
 
     except Exception as e:
         # Catch other potential errors during processing
-        print(f"An unexpected error occurred: {repr(e)}\n{traceback.format_exc()}")
+        logger.warning(f"An unexpected error occurred: {repr(e)}\n{traceback.format_exc()}")
         if _flag:
             results.append((f"<Internal Error: {e}>", error_rgb))
             return results

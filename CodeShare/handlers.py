@@ -90,27 +90,12 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
 
     if len(cmd) == 2:
         language_name = cmd[0].strip()
-        if language_name not in [
-            "python",
-            "c",
-            "cpp",
-            "java",
-            "cs",
-            "js",
-            "ts",
-            "rust",
-            "go",
-            "php",
-            "ruby",
-            "kotlin",
-            "swift",
-            "perl",
-            "lua",
-            "sql"
-        ]:
+        if language_name not in highlight.language_mapping:
             if not is_reply:
                 code = cmd[0] + " " + code
             language_name = "guess"
+        else:
+            language_name = highlight.language_mapping[language_name]
 
     code = "\n".join(dedent_lines(code.split("\n")))
 
