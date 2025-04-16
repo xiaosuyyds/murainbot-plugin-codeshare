@@ -8,7 +8,7 @@
 
 ***✨ [MuRainBot2](https://github.com/MuRainBot/MuRainBot2) 插件，生成美观、可供分享的代码图片 ✨***
 
-![示例图片](example.png)
+![示例图片](example.webp)
 
 > *麻麻再也不用担心我看群里的文本代码看的头晕眼花了*
 
