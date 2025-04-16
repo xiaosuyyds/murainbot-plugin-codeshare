@@ -4,7 +4,7 @@
 import os
 import uuid
 import string
-from PIL import ImageFont, Image, ImageDraw
+from PIL import ImageFont, Image, ImageDraw, ImageFilter
 from power_text import *
 from PowerBlur import rounded_rectangle
 from power_text.local_emoji_source import LocalEmojiSource
@@ -143,11 +143,14 @@ def draw_code(colors_code):
         (42, 202, 68)
     ]
 
+    base_circle = Image.new("L", (25 * 3, 25 * 3), 0)
+    draw = ImageDraw.Draw(base_circle)
+    draw.ellipse((0, 0, 25 * 3, 25 * 3), fill=255)
+    base_circle = base_circle.resize((25, 25), Image.Resampling.LANCZOS)
+
     for i, color in enumerate(circle_colors):
-        circle = Image.new("RGBA", (25 * 3, 25 * 3), (0, 0, 0, 0))
-        draw = ImageDraw.Draw(circle)
-        draw.ellipse((0, 0, 25 * 3, 25 * 3), fill=color)
-        circle = circle.resize((25, 25), Image.Resampling.LANCZOS)
+        circle = Image.new("RGBA", (25, 25), color)
+        circle.putalpha(base_circle)
         window.paste(circle, (20 + i * 35, 20), circle)
 
     window_mask = Image.new("RGBA", window.size, (0, 0, 0, 0))
@@ -158,10 +161,25 @@ def draw_code(colors_code):
         color=(255, 255, 255),
         outline_width=0,
     )
+
+    shadow_blur_radius = 10
+
     bg = Image.new("RGBA", (window.size[0] + 80, window.size[1] + 80), (167, 180, 190, 255))
 
-    bg.paste(window, (40, 40), window_mask)
     draw = ImageDraw.Draw(bg)
+
+    rounded_rectangle(
+        image=bg,
+        size=(40, 40, window_mask.size[0] + 40, window_mask.size[1] + 40),
+        radius=15,
+        color=(0, 0, 0),
+        outline_width=0,
+    )
+
+    bg = bg.filter(ImageFilter.GaussianBlur(shadow_blur_radius))
+
+    bg.paste(window, (40, 40), window_mask)
+
     draw.text((10, bg.size[1] - 36), "by xiaosuyyds/murainbot-plugin-codeshare", (100, 100, 100), english_font)
 
     bg.save(path, quality=95)
