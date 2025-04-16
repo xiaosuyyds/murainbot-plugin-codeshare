@@ -166,8 +166,6 @@ def draw_code(colors_code):
 
     bg = Image.new("RGBA", (window.size[0] + 80, window.size[1] + 80), (167, 180, 190, 255))
 
-    draw = ImageDraw.Draw(bg)
-
     rounded_rectangle(
         image=bg,
         size=(40, 40, window_mask.size[0] + 40, window_mask.size[1] + 40),
@@ -179,6 +177,8 @@ def draw_code(colors_code):
     bg = bg.filter(ImageFilter.GaussianBlur(shadow_blur_radius))
 
     bg.paste(window, (40, 40), window_mask)
+
+    draw = ImageDraw.Draw(bg)
 
     draw.text((10, bg.size[1] - 36), "by xiaosuyyds/murainbot-plugin-codeshare", (100, 100, 100), english_font)
 
