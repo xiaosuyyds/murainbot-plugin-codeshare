@@ -3,8 +3,6 @@
 
 from Lib import Logger
 
-import traceback
-
 from pygments.lexers import get_lexer_by_name, guess_lexer
 from pygments.styles import get_style_by_name
 from pygments.token import Token, Error
@@ -73,14 +71,14 @@ def get_token_colors(code_snippet, style_name='lightbulb', language='guess', _fl
             except Exception as e:
                 logger.warning(f"An unexpected error occurred: from get_token_colors:"
                                f"{ttext} {ttype}\n"
-                               f"{repr(e)}\n{traceback.format_exc()}")
+                               f"{repr(e)}", exc_info=True)
                 rgb_color = default_rgb
 
             results.append((ttext, rgb_color))
 
     except Exception as e:
         # Catch other potential errors during processing
-        logger.warning(f"An unexpected error occurred: {repr(e)}\n{traceback.format_exc()}")
+        logger.warning(f"An unexpected error occurred: {repr(e)}", exc_info=True)
         if _flag:
             results.append((f"<Internal Error: {e}>", error_rgb))
             return results
