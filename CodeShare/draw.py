@@ -116,7 +116,7 @@ def draw_code(colors_code):
         code_line += [{"text": "\n", "color": None}]
         line_num += 1
         draw.text((0, now_y), str(line_num).rjust(3), (127, 132, 156), english_font)
-        _, text_y = draw_text(
+        res = draw_text(
             img, (50, now_y), code_line, fonts, (0, 0, 0),
             max_x=max_x - 50,
             max_y=3200,
@@ -126,7 +126,7 @@ def draw_code(colors_code):
             has_emoji=True,
             emoji_source=LocalEmojiSource(os.path.join(DATA_PATH, "emoji"))
         )
-        now_y = text_y
+        now_y += res.lines * res.line_height_used
         # print(now_y, line_num)
 
     path = os.path.join(CACHE_PATH, f"code-{uuid.uuid4().hex}.webp")
