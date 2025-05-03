@@ -1,7 +1,6 @@
 # Licensed under the Apache License: http://www.apache.org/licenses/LICENSE-2.0
 # For details: https://github.com/xiaosuyyds/murainbot-plugin-codeshare/blob/master/NOTICE
 
-import os
 import uuid
 import string
 from PIL import ImageFont, Image, ImageDraw, ImageFilter
@@ -10,11 +9,9 @@ from PowerBlur import rounded_rectangle
 from power_text.local_emoji_source import LocalEmojiSource
 
 from Lib.constants import *
-from Lib import PluginConfig, Logger
-
+from Lib import PluginConfig, Logger, common
 
 logger = Logger.get_logger()
-
 
 config = PluginConfig.PluginConfig(
     default_config="""# CodeShare插件配置文件
@@ -42,17 +39,18 @@ except FileNotFoundError as e:
 
 def is_english_char(char: dict[str, str]) -> bool:
     return (
-        'a' <= str(char["text"]).lower() <= 'z'
-        or str(char["text"]) in string.digits
-        or str(char["text"]) in string.punctuation
-        or str(char["text"]) in string.whitespace
+            'a' <= str(char["text"]).lower() <= 'z'
+            or str(char["text"]) in string.digits
+            or str(char["text"]) in string.punctuation
+            or str(char["text"]) in string.whitespace
     )
 
 
-def is_chinese_char(_: dict[str, str]) -> bool:
+def any_char(_: dict[str, str]) -> bool:
     return True
 
 
+@common.function_cache(500)
 def get_font(raw_font, matcher, color):
     return Font(raw_font, matcher, color)
 
@@ -73,17 +71,21 @@ def draw_code(colors_code):
     for color in unique_colors:
         matcher_en = lambda c, bound_color=color: text_matcher(c, bound_color, is_english_char)
         fonts.append(get_font(english_font, matcher_en, color))
+
+    # 行号
+    fonts.append(get_font(english_font, is_english_char, (127, 132, 156)))
+
     fonts.append(get_font(english_font, is_english_char, None))
 
     for color in unique_colors:
-        matcher_ch = lambda c, bound_color=color: text_matcher(c, bound_color, is_chinese_char)
+        matcher_ch = lambda c, bound_color=color: text_matcher(c, bound_color, any_char)
         fonts.append(get_font(chinese_font, matcher_ch, color))
-    fonts.append(get_font(chinese_font, is_chinese_char, None))
+    fonts.append(get_font(chinese_font, any_char, None))
 
     for color in unique_colors:
-        matcher_ch = lambda c, bound_color=color: text_matcher(c, bound_color, is_chinese_char)
+        matcher_ch = lambda c, bound_color=color: text_matcher(c, bound_color, any_char)
         fonts.append(get_font(fallback_font, matcher_ch, color))
-    fonts.append(get_font(fallback_font, is_chinese_char, None))
+    fonts.append(get_font(fallback_font, any_char, None))
 
     code_lines = []
     current_line = []
@@ -97,37 +99,29 @@ def draw_code(colors_code):
             if part:  # 如果部分不为空，添加到当前行
                 current_line += [{"text": part, "color": color}]
         # 检查行数限制
-        if len(code_lines) > 120:
+        if len(code_lines) > 150:
             message = "你的代码太长了，已自动截断"
             break
 
     if current_line:
         code_lines.append(current_line)
-        if len(code_lines) > 200:
-            raise ValueError("Code is too long")
 
-    # print(repr(code_lines))
-
-    draw = ImageDraw.Draw(img)
-
-    now_y = 0
-    line_num = 0
-    for code_line in code_lines:
-        code_line += [{"text": "\n", "color": None}]
-        line_num += 1
-        draw.text((0, now_y), str(line_num).rjust(3), (127, 132, 156), english_font)
-        res = draw_text(
-            img, (50, now_y), code_line, fonts, (0, 0, 0),
-            max_x=max_x - 50,
-            max_y=3200,
-            line_height=25,
-            end_text="",
-            end_text_font=english_font.font,
-            has_emoji=True,
-            emoji_source=LocalEmojiSource(os.path.join(DATA_PATH, "emoji"))
-        )
-        now_y += res.lines * res.line_height_used
-        # print(now_y, line_num)
+    code_lines = [
+        [{"text": f"{i + 1:>3}  ", "color": (127, 132, 156)}] + code_lines[i] + [{"text": "\n", "color": None}]
+        for i in range(len(code_lines))
+    ]
+    code_lines = [_ for code_line in code_lines for _ in code_line]
+    draw_text(
+        img, (0, 0), code_lines, fonts, (0, 0, 0),
+        max_x=max_x - 50,
+        max_y=3200,
+        line_height=25,
+        end_text="",
+        end_text_font=english_font.font,
+        has_emoji=True,
+        emoji_source=LocalEmojiSource(os.path.join(DATA_PATH, "emoji")),
+        wrap_indent="     "
+    )
 
     path = os.path.join(CACHE_PATH, f"code-{uuid.uuid4().hex}.webp")
 

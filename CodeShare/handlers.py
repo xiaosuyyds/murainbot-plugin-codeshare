@@ -4,43 +4,10 @@
 from Lib import *
 from plugins.CodeShare import highlight, draw
 
-import os
+import textwrap
 
 
-def get_leading_whitespace(s: str) -> str:
-    count = 0
-    for char in s:
-        if char.isspace():
-            count += 1
-        else:
-            break
-    return s[:count]
-
-
-def dedent_lines(lines):
-    if not lines:
-        return []
-
-    lines_with_content = [line for line in lines if line.strip()]
-
-    if not lines_with_content:
-        return lines[:]
-
-    leading_whitespaces = [get_leading_whitespace(line) for line in lines_with_content]
-
-    if not leading_whitespaces:
-        common_prefix = ""
-    else:
-        common_prefix = os.path.commonprefix(leading_whitespaces)
-
-    prefix_len = len(common_prefix)
-
-    if prefix_len == 0:
-        return lines[:]
-
-    result_lines = [line[prefix_len:] for line in lines]
-
-    return result_lines
+logger = Logger.get_logger()
 
 
 matcher = EventHandlers.on_event(EventClassifier.MessageEvent, rules=[EventHandlers.CommandRule(
@@ -64,10 +31,12 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
                     f"获取代码失败，请换条消息稍后再试\n错误信息{repr(code_msg.unwrap_err())}"
                 )
             )
-            if event_data.message_type == "group":
-                Actions.SendMsg(message=message, group_id=event_data["group_id"]).call()
-            else:
-                Actions.SendMsg(message=message, user_id=event_data.user_id).call()
+            Actions.SendMsg(
+                message=message,
+                **{"group_id": event_data["group_id"]}
+                if event_data.message_type == "group" else
+                {"user_id": event_data.user_id}
+            ).call()
             raise code_msg.unwrap_err()
         is_reply = True
     else:
@@ -90,26 +59,29 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
 
     if len(cmd) == 2:
         language_name = cmd[0].strip()
-        if language_name not in highlight.language_mapping:
+        if language_name not in highlight.language_mapping and language_name not in highlight.language_mapping.values():
             if not is_reply:
                 code = cmd[0] + " " + code
             language_name = "guess"
         else:
-            language_name = highlight.language_mapping[language_name]
+            if language_name in highlight.language_mapping:
+                language_name = highlight.language_mapping[language_name]
 
-    code = "\n".join(dedent_lines(code.split("\n")))
+    code = textwrap.dedent(code)
 
     if code.startswith(" "):
         code = code[1:]
 
-    print(f"code: {code}")
+    logger.debug(f"code: {code}")
 
     if not code or not code.strip():
         message = QQRichText.QQRichText("请输入代码")
-        if event_data.message_type == "group":
-            Actions.SendMsg(message=message, group_id=event_data["group_id"]).call()
-        else:
-            Actions.SendMsg(message=message, user_id=event_data.user_id).call()
+        Actions.SendMsg(
+            message=message,
+            **{"group_id": event_data["group_id"]}
+            if event_data.message_type == "group" else
+            {"user_id": event_data.user_id}
+        ).call()
         return
     try:
         code_colors = highlight.get_token_colors(code, language=language_name)
@@ -119,10 +91,12 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
                 f"代码高亮处理失败，请检查代码是否正确。\n错误信息：{repr(e)}"
             )
         )
-        if event_data.message_type == "group":
-            Actions.SendMsg(message=message, group_id=event_data["group_id"]).call()
-        else:
-            Actions.SendMsg(message=message, user_id=event_data.user_id).call()
+        Actions.SendMsg(
+            message=message,
+            **{"group_id": event_data["group_id"]}
+            if event_data.message_type == "group" else
+            {"user_id": event_data.user_id}
+        ).call()
         raise e
 
     try:
@@ -133,10 +107,12 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
                 f"图片绘制失败，请稍后再试。\n错误信息：{repr(e)}"
             )
         )
-        if event_data.message_type == "group":
-            Actions.SendMsg(message=message, group_id=event_data["group_id"]).call()
-        else:
-            Actions.SendMsg(message=message, user_id=event_data.user_id).call()
+        Actions.SendMsg(
+            message=message,
+            **{"group_id": event_data["group_id"]}
+            if event_data.message_type == "group" else
+            {"user_id": event_data.user_id}
+        ).call()
         raise e
 
     message = QQRichText.QQRichText(
@@ -146,7 +122,9 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
     if draw_message:
         message += QQRichText.Text(draw_message)
 
-    if event_data.message_type == "group":
-        Actions.SendMsg(message=message, group_id=event_data["group_id"]).call()
-    else:
-        Actions.SendMsg(message=message, user_id=event_data.user_id).call()
+    Actions.SendMsg(
+        message=message,
+        **{"group_id": event_data["group_id"]}
+        if event_data.message_type == "group" else
+        {"user_id": event_data.user_id}
+    ).call()
