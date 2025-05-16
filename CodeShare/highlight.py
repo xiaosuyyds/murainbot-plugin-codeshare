@@ -22,6 +22,7 @@ def hex_to_rgb(hex_color):
 language_mapping = {
     "py": "python",
     "c": "c",
+    "c++": "cpp",
     "cpp": "cpp",
     "cs": "csharp",
     "js": "javascript",
@@ -30,14 +31,14 @@ language_mapping = {
     "go": "go",
     "php": "php",
     "ruby": "ruby",
-    "kotlin": "kotlin",
+    "kt": "kotlin",
     "java": "java",
     "swift": "swift",
     "perl": "perl",
     "lua": "lua",
     "sql": "sql",
     "json": "json",
-    "md": "markdown",
+    "md": "markdown"
 }
 
 

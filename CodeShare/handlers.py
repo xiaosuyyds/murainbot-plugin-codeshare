@@ -6,9 +6,7 @@ from plugins.CodeShare import highlight, draw
 
 import textwrap
 
-
 logger = Logger.get_logger()
-
 
 matcher = EventHandlers.on_event(EventClassifier.MessageEvent, rules=[EventHandlers.CommandRule(
     "codeshare", {"cs"}, reply=True
@@ -26,13 +24,13 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
             code_msg = code_msg.unwrap()
             message = QQRichText.QQRichText(code_msg["message"])
         else:
-            message = QQRichText.QQRichText(
-                QQRichText.Text(
-                    f"获取代码失败，请换条消息稍后再试\n错误信息{repr(code_msg.unwrap_err())}"
-                )
-            )
             Actions.SendMsg(
-                message=message,
+                message=QQRichText.QQRichText(
+                    QQRichText.Reply(event_data.message_id),
+                    QQRichText.Text(
+                        f"获取代码失败，请换条消息稍后再试\n错误信息{repr(code_msg.unwrap_err())}"
+                    )
+                ),
                 **{"group_id": event_data["group_id"]}
                 if event_data.message_type == "group" else
                 {"user_id": event_data.user_id}
@@ -46,21 +44,39 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
         if isinstance(rich, QQRichText.Text):
             code += rich.data.get("text")
 
-    cmd = code.split("codeshare", 1)[-1]
+    if is_reply:
+        cmd = str(QQRichText.QQRichText(event_data.message.rich_array[1:]))
+    else:
+        cmd = code
+    cmd = cmd.split("codeshare", 1)[-1]
 
     if cmd.startswith(" "):
         cmd = cmd[1:]
     cmd = cmd.split(" ", 1)
 
     if not is_reply:
-        code = cmd[-1]
+        code = cmd.pop(-1)
+
+    if len(cmd) == 1 and not cmd[0].strip():
+        cmd = []
 
     language_name = "guess"
 
-    if len(cmd) == 2:
+    if len(cmd) == 1:
         language_name = cmd[0].strip()
         if language_name not in highlight.language_mapping and language_name not in highlight.language_mapping.values():
-            if not is_reply:
+            if is_reply:
+                Actions.SendMsg(
+                    message=QQRichText.QQRichText(
+                        QQRichText.Reply(event_data.message_id),
+                        QQRichText.Text("请输入正确的语言名称，发送/help CodeShare以获取帮助。")
+                    ),
+                    **{"group_id": event_data["group_id"]}
+                    if event_data.message_type == "group" else
+                    {"user_id": event_data.user_id}
+                ).call()
+                return
+            else:
                 code = cmd[0] + " " + code
             language_name = "guess"
         else:
@@ -75,9 +91,11 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
     logger.debug(f"code: {code}")
 
     if not code or not code.strip():
-        message = QQRichText.QQRichText("请输入代码")
         Actions.SendMsg(
-            message=message,
+            message=QQRichText.QQRichText(
+                QQRichText.Reply(event_data.message_id),
+                QQRichText.Text("请输入代码")
+            ),
             **{"group_id": event_data["group_id"]}
             if event_data.message_type == "group" else
             {"user_id": event_data.user_id}
@@ -86,13 +104,13 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
     try:
         code_colors = highlight.get_token_colors(code, language=language_name)
     except Exception as e:
-        message = QQRichText.QQRichText(
-            QQRichText.Text(
-                f"代码高亮处理失败，请检查代码是否正确。\n错误信息：{repr(e)}"
-            )
-        )
         Actions.SendMsg(
-            message=message,
+            message=QQRichText.QQRichText(
+                QQRichText.Reply(event_data.message_id),
+                QQRichText.Text(
+                    f"代码高亮处理失败，请检查代码是否正确。\n错误信息：{repr(e)}"
+                )
+            ),
             **{"group_id": event_data["group_id"]}
             if event_data.message_type == "group" else
             {"user_id": event_data.user_id}
@@ -102,13 +120,13 @@ def codeshare_handler(event_data: EventClassifier.MessageEvent):
     try:
         output_path, draw_message = draw.draw_code(code_colors)
     except Exception as e:
-        message = QQRichText.QQRichText(
-            QQRichText.Text(
-                f"图片绘制失败，请稍后再试。\n错误信息：{repr(e)}"
-            )
-        )
         Actions.SendMsg(
-            message=message,
+            message=QQRichText.QQRichText(
+                QQRichText.Reply(event_data.message_id),
+                QQRichText.Text(
+                    f"图片绘制失败，请稍后再试。\n错误信息：{repr(e)}"
+                )
+            ),
             **{"group_id": event_data["group_id"]}
             if event_data.message_type == "group" else
             {"user_id": event_data.user_id}
